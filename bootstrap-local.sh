@@ -71,6 +71,7 @@ echo -e "${BLUE}==>${NC} Installing Ansible collections..."
 ansible-galaxy collection install community.general
 
 # Setup playbook directory
+PLAYBOOK_REPO="https://github.com/HexSleeves/dotfiles-playbook.git"
 PLAYBOOK_DIR="$HOME/.dotfiles-playbook"
 CURRENT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
@@ -85,7 +86,7 @@ else
         cd "$PLAYBOOK_DIR" && git pull
     else
         echo -e "${BLUE}==>${NC} Cloning playbook..."
-        git clone https://github.com/yourusername/dotfiles-playbook.git "$PLAYBOOK_DIR"
+        git clone "$PLAYBOOK_REPO" "$PLAYBOOK_DIR"
     fi
 fi
 
@@ -95,7 +96,7 @@ echo -e "${YELLOW}Note: Some tasks may require sudo password${NC}"
 echo ""
 echo -e "${BLUE}==>${NC} Running playbook..."
 cd "$PLAYBOOK_DIR"
-ansible-playbook site.yml $TAGS
+ansible-playbook site.yml "$TAGS" --ask-become-pass
 
 echo ""
 echo -e "${GREEN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"

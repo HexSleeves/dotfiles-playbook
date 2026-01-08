@@ -34,18 +34,20 @@ ansible-galaxy collection install community.general
 
 # Clone playbook
 PLAYBOOK_DIR="$HOME/.dotfiles-playbook"
+PLAYBOOK_REPO="https://github.com/HexSleeves/dotfiles-playbook.git"
+
 if [[ -d "$PLAYBOOK_DIR" ]]; then
     echo -e "${BLUE}==>${NC} Updating playbook..."
     cd "$PLAYBOOK_DIR" && git pull
 else
     echo -e "${BLUE}==>${NC} Cloning playbook..."
-    git clone https://github.com/yourusername/dotfiles-playbook.git "$PLAYBOOK_DIR"
+    git clone "$PLAYBOOK_REPO" "$PLAYBOOK_DIR"
 fi
 
 # Run minimal setup
 echo -e "${BLUE}==>${NC} Running minimal setup..."
 cd "$PLAYBOOK_DIR"
-ansible-playbook site.yml --tags exedev,minimal
+ansible-playbook site.yml --tags exedev,minimal --ask-become-pass
 
 echo ""
 echo -e "${GREEN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"

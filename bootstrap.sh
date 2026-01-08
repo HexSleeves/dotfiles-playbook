@@ -4,10 +4,10 @@
 # Automatically installs Ansible and runs the dotfiles playbook
 #
 # Usage:
-#   curl -fsSL https://raw.githubusercontent.com/yourusername/dotfiles-playbook/main/bootstrap.sh | bash
+#   curl -fsSL https://raw.githubusercontent.com/HexSleeves/dotfiles-playbook/main/bootstrap.sh | bash
 #
 # Or for exe.dev VMs (minimal setup):
-#   curl -fsSL https://raw.githubusercontent.com/yourusername/dotfiles-playbook/main/bootstrap.sh | bash -s -- --minimal
+#   curl -fsSL https://raw.githubusercontent.com/HexSleeves/dotfiles-playbook/main/bootstrap.sh | bash -s -- --minimal
 #
 
 set -e
@@ -75,7 +75,8 @@ detect_os() {
 
 # Install Ansible
 install_ansible() {
-    local os_type=$(detect_os)
+    local os_type
+    os_type=$(detect_os)
 
     print_step "Detected OS: $os_type"
 
