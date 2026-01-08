@@ -135,11 +135,12 @@ setup_playbook() {
 
 # Run the playbook
 run_playbook() {
-    local os_type=$(detect_os)
-    local tags=""
+    local os_type
+    os_type=$(detect_os)
 
     print_step "Running playbook..."
 
+    local tags=""
     if [[ "$MINIMAL_SETUP" == true ]]; then
         print_step "Running minimal setup for VM environment..."
         tags="--tags exedev,minimal"
@@ -156,7 +157,7 @@ run_playbook() {
 
     # Run the playbook
     cd "$PLAYBOOK_DIR"
-    ansible-playbook site.yml $tags
+    ansible-playbook site.yml "$tags" --ask-become-pass
 }
 
 # Main execution
