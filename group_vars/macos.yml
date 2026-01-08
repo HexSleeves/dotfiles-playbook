@@ -1,0 +1,68 @@
+---
+# macOS-specific variables for work environment
+
+# Homebrew packages for development
+homebrew_packages:
+  # Modern CLI tools
+  - bat
+  - eza
+  - fd
+  - ripgrep
+  - fzf
+  - delta
+  - jq
+  - yq
+  - gh
+  - lazygit
+
+  # Development tools
+  - node
+  - python@3.11
+  - go
+  - rust
+  - docker
+  - kubectl
+  - helm
+  - terraform
+
+  # Databases and tools
+  - postgresql
+  - redis
+  - sqlite
+
+  # Utilities
+  - neovim
+  - tmux
+  - zsh
+  - starship
+  - direnv
+
+# Homebrew casks (GUI applications)
+homebrew_casks:
+  - visual-studio-code
+  - iterm2
+  - docker
+  - postman
+  - slack
+  - notion
+  - rectangle
+  - stats
+
+# macOS defaults to set
+macos_defaults:
+  - domain: com.apple.dock
+    key: autohide
+    type: bool
+    value: true
+  - domain: com.apple.dock
+    key: show-recents
+    type: bool
+    value: false
+  - domain: NSGlobalDomain
+    key: AppleShowAllExtensions
+    type: bool
+    value: true
+  - domain: com.apple.finder
+    key: ShowPathbar
+    type: bool
+    value: true

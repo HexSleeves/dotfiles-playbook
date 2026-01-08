@@ -1,0 +1,202 @@
+---
+# Linux desktop-specific tasks for personal environment
+
+- name: Update APT cache (Debian/Ubuntu)
+  ansible.builtin.apt:
+    update_cache: yes
+    cache_valid_time: 3600
+  become: yes
+  when: ansible_os_family == 'Debian'
+
+- name: Install APT packages (Debian/Ubuntu)
+  ansible.builtin.apt:
+    name: "{{ item }}"
+    state: present
+  become: yes
+  loop: "{{ apt_packages }}"
+  when: ansible_os_family == 'Debian'
+
+- name: Update DNF cache (Fedora/RHEL)
+  ansible.builtin.dnf:
+    update_cache: yes
+  become: yes
+  when: ansible_os_family == 'RedHat'
+
+- name: Install DNF packages (Fedora/RHEL)
+  ansible.builtin.dnf:
+    name: "{{ item }}"
+    state: present
+  become: yes
+  loop: "{{ dnf_packages }}"
+  when: ansible_os_family == 'RedHat'
+
+- name: Check if Snap is available
+  ansible.builtin.command: which snap
+  register: snap_check
+  ignore_errors: yes
+  changed_when: false
+
+- name: Install Snap packages
+  community.general.snap:
+    name: "{{ item.name }}"
+    classic: "{{ item.classic }}"
+    state: present
+  become: yes
+  loop: "{{ snap_packages }}"
+  when: snap_check.rc == 0
+
+- name: Install Starship prompt
+  ansible.builtin.shell: |
+    curl -sS https://starship.rs/install.sh | sh -s -- -y
+  args:
+    creates: /usr/local/bin/starship
+
+- name: Configure Starship in zshrc
+  ansible.builtin.lineinfile:
+    path: "{{ ansible_env.HOME }}/.zshrc"
+    line: 'eval "$(starship init zsh)"'
+    create: yes
+
+- name: Configure Starship in bashrc
+  ansible.builtin.lineinfile:
+    path: "{{ ansible_env.HOME }}/.bashrc"
+    line: 'eval "$(starship init bash)"'
+    create: yes
+
+- name: Install Rust (for additional tools)
+  ansible.builtin.shell: |
+    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+  args:
+    creates: "{{ ansible_env.HOME }}/.cargo/bin/rustc"
+
+- name: Source Rust environment in bashrc
+  ansible.builtin.lineinfile:
+    path: "{{ ansible_env.HOME }}/.bashrc"
+    line: 'source "$HOME/.cargo/env"'
+    create: yes
+
+- name: Install modern CLI tools via cargo
+  ansible.builtin.shell: |
+    source "$HOME/.cargo/env" && cargo install {{ item }}
+  args:
+    creates: "{{ ansible_env.HOME }}/.cargo/bin/{{ item }}"
+  loop:
+    - eza
+    - bat
+    - fd-find
+    - delta
+  ignore_errors: yes
+
+- name: Link dotfiles (zshrc)
+  ansible.builtin.file:
+    src: "{{ dotfiles_dest }}/.zshrc"
+    dest: "{{ ansible_env.HOME }}/.zshrc"
+    state: link
+    force: yes
+  when: dotfiles_dir.stat.exists
+  ignore_errors: yes
+
+- name: Link dotfiles (bashrc)
+  ansible.builtin.file:
+    src: "{{ dotfiles_dest }}/.bashrc"
+    dest: "{{ ansible_env.HOME }}/.bashrc"
+    state: link
+    force: yes
+  when: dotfiles_dir.stat.exists
+  ignore_errors: yes
+
+- name: Link dotfiles (vimrc)
+  ansible.builtin.file:
+    src: "{{ dotfiles_dest }}/.vimrc"
+    dest: "{{ ansible_env.HOME }}/.vimrc"
+    state: link
+    force: yes
+  when: dotfiles_dir.stat.exists
+  ignore_errors: yes
+
+- name: Link dotfiles (tmux.conf)
+  ansible.builtin.file:
+    src: "{{ dotfiles_dest }}/.tmux.conf"
+    dest: "{{ ansible_env.HOME }}/.tmux.conf"
+    state: link
+    force: yes
+  when: dotfiles_dir.stat.exists
+  ignore_errors: yes
+
+- name: Link dotfiles (gitconfig)
+  ansible.builtin.file:
+    src: "{{ dotfiles_dest }}/.gitconfig"
+    dest: "{{ ansible_env.HOME }}/.gitconfig"
+    state: link
+    force: yes
+  when: dotfiles_dir.stat.exists
+  ignore_errors: yes
+
+- name: Install fzf
+  ansible.builtin.git:
+    repo: https://github.com/junegunn/fzf.git
+    dest: "{{ ansible_env.HOME }}/.fzf"
+    depth: 1
+    update: yes
+
+- name: Run fzf install script
+  ansible.builtin.shell: |
+    "{{ ansible_env.HOME }}/.fzf/install" --all --no-bash --no-fish
+  args:
+    creates: "{{ ansible_env.HOME }}/.fzf.zsh"
+
+- name: Configure fzf in zshrc
+  ansible.builtin.lineinfile:
+    path: "{{ ansible_env.HOME }}/.zshrc"
+    line: '[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh'
+    create: yes
+
+- name: Install Node.js via nvm
+  ansible.builtin.shell: |
+    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
+  args:
+    creates: "{{ ansible_env.HOME }}/.nvm/nvm.sh"
+
+- name: Source nvm in bashrc
+  ansible.builtin.lineinfile:
+    path: "{{ ansible_env.HOME }}/.bashrc"
+    line: 'export NVM_DIR="$HOME/.nvm" && [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"'
+    create: yes
+
+- name: Install direnv (Debian/Ubuntu)
+  ansible.builtin.apt:
+    name: direnv
+    state: present
+  become: yes
+  when: ansible_os_family == 'Debian'
+
+- name: Install direnv (Fedora/RHEL)
+  ansible.builtin.dnf:
+    name: direnv
+    state: present
+  become: yes
+  when: ansible_os_family == 'RedHat'
+
+- name: Configure direnv in zshrc
+  ansible.builtin.lineinfile:
+    path: "{{ ansible_env.HOME }}/.zshrc"
+    line: 'eval "$(direnv hook zsh)"'
+    create: yes
+
+- name: Configure direnv in bashrc
+  ansible.builtin.lineinfile:
+    path: "{{ ansible_env.HOME }}/.bashrc"
+    line: 'eval "$(direnv hook bash)"'
+    create: yes
+
+- name: Set up Git aliases
+  community.general.git_config:
+    name: "alias.{{ item.name }}"
+    scope: global
+    value: "{{ item.value }}"
+  loop:
+    - { name: 'co', value: 'checkout' }
+    - { name: 'br', value: 'branch' }
+    - { name: 'ci', value: 'commit' }
+    - { name: 'st', value: 'status' }
+    - { name: 'lg', value: 'log --oneline --graph --decorate' }

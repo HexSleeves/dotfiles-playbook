@@ -1,0 +1,125 @@
+---
+# macOS-specific tasks for work environment
+
+- name: Check if Homebrew is installed
+  ansible.builtin.stat:
+    path: /opt/homebrew/bin/brew
+  register: homebrew_check
+
+- name: Install Homebrew
+  ansible.builtin.shell: |
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+  when: not homebrew_check.stat.exists
+
+- name: Add Homebrew to PATH for Apple Silicon
+  ansible.builtin.lineinfile:
+    path: "{{ ansible_env.HOME }}/.zprofile"
+    line: 'eval "$(/opt/homebrew/bin/brew shellenv)"'
+    create: yes
+  when: ansible_machine == 'arm64'
+
+- name: Update Homebrew
+  community.general.homebrew:
+    update_homebrew: yes
+  ignore_errors: yes
+
+- name: Install Homebrew packages
+  community.general.homebrew:
+    name: "{{ item }}"
+    state: present
+  loop: "{{ homebrew_packages }}"
+  ignore_errors: yes
+
+- name: Install Homebrew casks
+  community.general.homebrew_cask:
+    name: "{{ item }}"
+    state: present
+  loop: "{{ homebrew_casks }}"
+  ignore_errors: yes
+
+- name: Set macOS defaults
+  community.general.osx_defaults:
+    domain: "{{ item.domain }}"
+    key: "{{ item.key }}"
+    type: "{{ item.type }}"
+    value: "{{ item.value }}"
+    state: present
+  loop: "{{ macos_defaults }}"
+  notify: Reload shell
+
+- name: Install Starship prompt
+  ansible.builtin.shell: |
+    curl -sS https://starship.rs/install.sh | sh -s -- -y
+  args:
+    creates: "{{ ansible_env.HOME }}/.cargo/bin/starship"
+
+- name: Configure Starship in zshrc
+  ansible.builtin.lineinfile:
+    path: "{{ ansible_env.HOME }}/.zshrc"
+    line: 'eval "$(starship init zsh)"'
+    create: yes
+
+- name: Create config directory for Starship
+  ansible.builtin.file:
+    path: "{{ ansible_env.HOME }}/.config"
+    state: directory
+    mode: '0755'
+
+- name: Link dotfiles (zshrc)
+  ansible.builtin.file:
+    src: "{{ dotfiles_dest }}/.zshrc"
+    dest: "{{ ansible_env.HOME }}/.zshrc"
+    state: link
+    force: yes
+  when: dotfiles_dir.stat.exists
+  ignore_errors: yes
+
+- name: Link dotfiles (vimrc)
+  ansible.builtin.file:
+    src: "{{ dotfiles_dest }}/.vimrc"
+    dest: "{{ ansible_env.HOME }}/.vimrc"
+    state: link
+    force: yes
+  when: dotfiles_dir.stat.exists
+  ignore_errors: yes
+
+- name: Link dotfiles (tmux.conf)
+  ansible.builtin.file:
+    src: "{{ dotfiles_dest }}/.tmux.conf"
+    dest: "{{ ansible_env.HOME }}/.tmux.conf"
+    state: link
+    force: yes
+  when: dotfiles_dir.stat.exists
+  ignore_errors: yes
+
+- name: Link dotfiles (gitconfig)
+  ansible.builtin.file:
+    src: "{{ dotfiles_dest }}/.gitconfig"
+    dest: "{{ ansible_env.HOME }}/.gitconfig"
+    state: link
+    force: yes
+  when: dotfiles_dir.stat.exists
+  ignore_errors: yes
+
+- name: Install direnv
+  community.general.homebrew:
+    name: direnv
+    state: present
+
+- name: Configure direnv in zshrc
+  ansible.builtin.lineinfile:
+    path: "{{ ansible_env.HOME }}/.zshrc"
+    line: 'eval "$(direnv hook zsh)"'
+    create: yes
+
+- name: Install fzf key bindings
+  ansible.builtin.lineinfile:
+    path: "{{ ansible_env.HOME }}/.zshrc"
+    line: '[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh'
+    create: yes
+
+- name: Run fzf install script
+  ansible.builtin.shell: |
+    $(brew --prefix)/opt/fzf/install --all --no-bash --no-fish
+  args:
+    creates: "{{ ansible_env.HOME }}/.fzf.zsh"

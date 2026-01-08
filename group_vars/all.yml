@@ -1,0 +1,18 @@
+---
+# Common variables for all platforms
+
+# Git configuration
+git_user_name: "Jacob LeCoq"
+git_user_email: "lecoqjacob@gmail.com"
+
+# Common CLI tools to install on all platforms
+common_tools:
+  - git
+  - curl
+  - wget
+  - vim
+  - tmux
+  - htop
+
+# Shell configuration
+default_shell: zsh

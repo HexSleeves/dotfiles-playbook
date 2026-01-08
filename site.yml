@@ -1,0 +1,48 @@
+---
+- name: Setup dotfiles across multiple platforms
+  hosts: all
+  gather_facts: true
+
+  vars:
+    dotfiles_repo: "https://github.com/yourusername/dotfiles.git"
+    dotfiles_dest: "{{ ansible_env.HOME }}/.dotfiles"
+
+  pre_tasks:
+    - name: Display platform information
+      ansible.builtin.debug:
+        msg: |
+          OS Family: {{ ansible_os_family }}
+          Distribution: {{ ansible_distribution | default('N/A') }}
+          Environment: {{ environment_type | default('unknown') }}
+          Minimal Setup: {{ minimal_setup | default(false) }}
+
+  tasks:
+    # Common tasks for all platforms
+    - name: Include common tasks
+      ansible.builtin.include_tasks: tasks/common.yml
+      tags: [always, common]
+
+    # macOS-specific tasks
+    - name: Include macOS tasks
+      ansible.builtin.include_tasks: tasks/macos.yml
+      when: ansible_os_family == 'Darwin'
+      tags: [macos]
+
+    # Linux-specific tasks
+    - name: Include Linux desktop tasks
+      ansible.builtin.include_tasks: tasks/linux.yml
+      when:
+        - ansible_os_family == 'Debian' or ansible_os_family == 'RedHat'
+        - minimal_setup is not defined or not minimal_setup
+      tags: [linux, desktop]
+
+    # exe.dev VM minimal setup
+    - name: Include exe.dev minimal tasks
+      ansible.builtin.include_tasks: tasks/exedev-minimal.yml
+      when: minimal_setup | default(false)
+      tags: [exedev, minimal]
+
+  handlers:
+    - name: Reload shell
+      ansible.builtin.debug:
+        msg: "Please reload your shell or run: source ~/.bashrc (or ~/.zshrc)"

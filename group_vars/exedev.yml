@@ -1,0 +1,28 @@
+---
+# exe.dev VM-specific variables for minimal setup
+
+# Minimal set of tools for VMs
+minimal_packages:
+  - git
+  - curl
+  - wget
+  - vim
+  - tmux
+  - htop
+  - ripgrep
+  - fzf
+  - jq
+  - bat
+
+# Essential development tools only
+minimal_dev_tools:
+  - build-essential
+  - python3
+  - python3-pip
+  - nodejs
+  - npm
+
+# Lightweight shell enhancements
+minimal_shell_tools:
+  - zsh
+  - starship
