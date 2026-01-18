@@ -1,0 +1,4 @@
+---
+chezmoi_enabled: true
+chezmoi_repo: "https://github.com/HexSleeves/dotfiles.git"
+chezmoi_apply_force: false

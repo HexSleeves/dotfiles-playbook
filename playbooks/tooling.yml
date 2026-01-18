@@ -1,0 +1,11 @@
+---
+- name: Install developer tooling
+  hosts: all
+  gather_facts: true
+
+  roles:
+    - role: tooling_mise
+      tags: [tooling, mise]
+
+    - role: tooling_bun
+      tags: [tooling, bun]

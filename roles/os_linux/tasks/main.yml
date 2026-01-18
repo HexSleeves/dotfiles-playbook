@@ -1,0 +1,44 @@
+---
+- name: Update APT cache (Debian/Ubuntu)
+  ansible.builtin.apt:
+    update_cache: true
+    cache_valid_time: 3600
+  become: true
+  when: ansible_facts['os_family'] == 'Debian'
+
+- name: Install APT packages (Debian/Ubuntu)
+  ansible.builtin.apt:
+    name: "{{ (apt_packages_vm if machine_profile == 'vm' else apt_packages) }}"
+    state: present
+  become: true
+  when: ansible_facts['os_family'] == 'Debian'
+
+- name: Update DNF cache (Fedora/RHEL)
+  ansible.builtin.dnf:
+    update_cache: true
+  become: true
+  when: ansible_facts['os_family'] == 'RedHat'
+
+- name: Install DNF packages (Fedora/RHEL)
+  ansible.builtin.dnf:
+    name: "{{ (dnf_packages_vm if machine_profile == 'vm' else dnf_packages) }}"
+    state: present
+  become: true
+  when: ansible_facts['os_family'] == 'RedHat'
+
+- name: Check if Snap is available
+  ansible.builtin.command: which snap
+  register: snap_check
+  ignore_errors: true
+  changed_when: false
+
+- name: Install Snap packages (if any)
+  community.general.snap:
+    name: "{{ item.name }}"
+    classic: "{{ item.classic | default(false) }}"
+    state: present
+  become: true
+  loop: "{{ snap_packages }}"
+  when:
+    - snap_check.rc == 0
+    - snap_packages | length > 0

@@ -47,7 +47,7 @@ fi
 # Run minimal setup
 echo -e "${BLUE}==>${NC} Running minimal setup..."
 cd "$PLAYBOOK_DIR"
-ansible-playbook site.yml --tags exedev,minimal --ask-become-pass
+ansible-playbook site.yml --ask-become-pass -e "machine_profile=vm"
 
 echo ""
 echo -e "${GREEN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"

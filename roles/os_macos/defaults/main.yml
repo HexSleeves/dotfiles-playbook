@@ -1,9 +1,5 @@
 ---
-# macOS-specific variables for work environment
-
-# Homebrew packages for development
 homebrew_packages:
-  # Modern CLI tools
   - bat
   - eza
   - fd
@@ -14,9 +10,6 @@ homebrew_packages:
   - yq
   - gh
   - lazygit
-
-  # Development tools
-  - node
   - python@3.11
   - go
   - rust
@@ -24,20 +17,15 @@ homebrew_packages:
   - kubectl
   - helm
   - terraform
-
-  # Databases and tools
   - postgresql
   - redis
   - sqlite
-
-  # Utilities
   - neovim
   - tmux
   - zsh
   - starship
   - direnv
 
-# Homebrew casks (GUI applications)
 homebrew_casks:
   - visual-studio-code
   - iterm2
@@ -48,7 +36,6 @@ homebrew_casks:
   - rectangle
   - stats
 
-# macOS defaults to set
 macos_defaults:
   - domain: com.apple.dock
     key: autohide

@@ -1,0 +1,52 @@
+---
+- name: Install chezmoi (macOS via Homebrew)
+  community.general.homebrew:
+    name: chezmoi
+    state: present
+  when:
+    - chezmoi_enabled
+    - ansible_facts['os_family'] == 'Darwin'
+
+- name: Install chezmoi (Linux via package manager, fallback to installer)
+  block:
+    - name: Ensure curl and git are present (Linux)
+      ansible.builtin.package:
+        name:
+          - curl
+          - git
+        state: present
+      become: true
+
+    - name: Install chezmoi (Linux package)
+      ansible.builtin.package:
+        name: chezmoi
+        state: present
+      become: true
+  rescue:
+    - name: Install chezmoi (Linux installer)
+      ansible.builtin.shell: sh -c "$(curl -fsLS get.chezmoi.io)" -- -b "{{ ansible_facts['env']['HOME'] }}/.local/bin"
+      args:
+        creates: "{{ ansible_facts['env']['HOME'] }}/.local/bin/chezmoi"
+  when:
+    - chezmoi_enabled
+    - ansible_facts['os_family'] in ['Debian', 'RedHat']
+
+- name: Check if chezmoi source directory exists
+  ansible.builtin.stat:
+    path: "{{ ansible_facts['env']['HOME'] }}/.local/share/chezmoi/.git"
+  register: chezmoi_git_dir
+  when: chezmoi_enabled
+
+- name: Initialize chezmoi (fresh) when repo is configured
+  ansible.builtin.command: chezmoi init "{{ chezmoi_repo }}"
+  when:
+    - chezmoi_enabled
+    - chezmoi_repo | length > 0
+    - not chezmoi_git_dir.stat.exists
+
+- name: Apply dotfiles via chezmoi (safe default)
+  ansible.builtin.command: >-
+    chezmoi apply {{ '--force' if chezmoi_apply_force else '' }}
+  when:
+    - chezmoi_enabled
+    - chezmoi_repo | length > 0

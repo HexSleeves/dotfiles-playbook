@@ -1,0 +1,16 @@
+---
+- name: Bootstrap system (base + OS)
+  hosts: all
+  gather_facts: true
+
+  roles:
+    - role: bootstrap
+      tags: [bootstrap]
+
+    - role: os_macos
+      when: ansible_facts['os_family'] == 'Darwin'
+      tags: [bootstrap, os, macos]
+
+    - role: os_linux
+      when: ansible_facts['os_family'] in ['Debian', 'RedHat']
+      tags: [bootstrap, os, linux]

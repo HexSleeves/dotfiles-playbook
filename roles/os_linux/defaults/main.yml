@@ -1,0 +1,88 @@
+---
+machine_profile: desktop
+
+apt_packages:
+  - bat
+  - fd-find
+  - ripgrep
+  - fzf
+  - jq
+  - build-essential
+  - git
+  - curl
+  - wget
+  - vim
+  - neovim
+  - tmux
+  - zsh
+  - python3
+  - python3-pip
+  - golang-go
+  - htop
+  - iotop
+  - ncdu
+  - tree
+  - unzip
+  - zip
+  - net-tools
+  - openssh-server
+
+dnf_packages:
+  - bat
+  - fd-find
+  - ripgrep
+  - fzf
+  - jq
+  - "@development-tools"
+  - git
+  - curl
+  - wget
+  - vim-enhanced
+  - neovim
+  - tmux
+  - zsh
+  - python3
+  - python3-pip
+  - golang
+  - htop
+  - iotop
+  - ncdu
+  - tree
+  - unzip
+  - zip
+  - net-tools
+  - openssh-server
+
+apt_packages_vm:
+  - git
+  - curl
+  - wget
+  - vim
+  - tmux
+  - htop
+  - ripgrep
+  - fzf
+  - jq
+  - bat
+  - build-essential
+  - python3
+  - python3-pip
+  - zsh
+
+dnf_packages_vm:
+  - git
+  - curl
+  - wget
+  - vim-enhanced
+  - tmux
+  - htop
+  - ripgrep
+  - fzf
+  - jq
+  - bat
+  - "@development-tools"
+  - python3
+  - python3-pip
+  - zsh
+
+snap_packages: []

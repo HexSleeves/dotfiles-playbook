@@ -1,0 +1,8 @@
+---
+- name: Apply dotfiles via chezmoi
+  hosts: all
+  gather_facts: true
+
+  roles:
+    - role: chezmoi
+      tags: [dotfiles, chezmoi]

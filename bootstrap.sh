@@ -141,24 +141,14 @@ run_playbook() {
 
     print_step "Running playbook..."
 
-    local tags=""
-    if [[ "$MINIMAL_SETUP" == true ]]; then
-        print_step "Running minimal setup for VM environment..."
-        tags="--tags exedev,minimal"
-    else
-        case $os_type in
-            macos)
-                tags="--tags macos"
-                ;;
-            debian|redhat)
-                tags="--tags linux"
-                ;;
-        esac
-    fi
-
     # Run the playbook
     cd "$PLAYBOOK_DIR"
-    ansible-playbook site.yml "$tags" --ask-become-pass
+    if [[ "$MINIMAL_SETUP" == true ]]; then
+        print_step "Running VM/minimal profile..."
+        ansible-playbook site.yml --ask-become-pass -e "machine_profile=vm"
+    else
+        ansible-playbook site.yml --ask-become-pass
+    fi
 }
 
 # Main execution
@@ -193,8 +183,8 @@ main() {
     echo ""
     echo "Next steps:"
     echo "  1. Reload your shell: source ~/.bashrc (or ~/.zshrc)"
-    echo "  2. Update your dotfiles repository URL in ~/.dotfiles-playbook/site.yml"
-    echo "  3. Re-run the playbook to sync your dotfiles: cd ~/.dotfiles-playbook && ansible-playbook site.yml"
+    echo "  2. Set your `chezmoi_repo` in ~/.dotfiles-playbook/inventories/home/group_vars/all.yml (or host_vars)"
+    echo "  3. Re-run: cd ~/.dotfiles-playbook && ansible-playbook site.yml"
     echo ""
 }
 

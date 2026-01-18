@@ -1,0 +1,57 @@
+---
+# macOS-specific variables
+
+homebrew_packages:
+  - bat
+  - eza
+  - fd
+  - ripgrep
+  - fzf
+  - delta
+  - jq
+  - yq
+  - gh
+  - lazygit
+  - python@3.11
+  - go
+  - rust
+  - docker
+  - kubectl
+  - helm
+  - terraform
+  - postgresql
+  - redis
+  - sqlite
+  - neovim
+  - tmux
+  - zsh
+  - starship
+  - direnv
+
+homebrew_casks:
+  - visual-studio-code
+  - iterm2
+  - docker
+  - postman
+  - slack
+  - notion
+  - rectangle
+  - stats
+
+macos_defaults:
+  - domain: com.apple.dock
+    key: autohide
+    type: bool
+    value: true
+  - domain: com.apple.dock
+    key: show-recents
+    type: bool
+    value: false
+  - domain: NSGlobalDomain
+    key: AppleShowAllExtensions
+    type: bool
+    value: true
+  - domain: com.apple.finder
+    key: ShowPathbar
+    type: bool
+    value: true

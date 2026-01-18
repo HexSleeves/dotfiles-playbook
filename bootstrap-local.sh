@@ -26,15 +26,12 @@ echo ""
 # Detect OS
 if [[ "$OSTYPE" == "darwin"* ]]; then
     OS="macos"
-    TAGS="--tags macos"
 elif [[ -f /etc/os-release ]]; then
     . /etc/os-release
     if [[ "$ID" == "ubuntu" ]] || [[ "$ID" == "debian" ]]; then
         OS="linux"
-        TAGS="--tags linux"
     elif [[ "$ID" == "fedora" ]] || [[ "$ID" == "rhel" ]]; then
         OS="linux"
-        TAGS="--tags linux"
     fi
 fi
 
@@ -96,7 +93,7 @@ echo -e "${YELLOW}Note: Some tasks may require sudo password${NC}"
 echo ""
 echo -e "${BLUE}==>${NC} Running playbook..."
 cd "$PLAYBOOK_DIR"
-ansible-playbook site.yml "$TAGS" --ask-become-pass
+ansible-playbook site.yml --ask-become-pass
 
 echo ""
 echo -e "${GREEN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
@@ -106,5 +103,5 @@ echo ""
 echo "Next steps:"
 echo "  1. Reload your shell: source ~/.zshrc (or ~/.bashrc)"
 echo "  2. Review installed tools and configurations"
-echo "  3. Customize $PLAYBOOK_DIR/group_vars/ as needed"
+echo "  3. Customize $PLAYBOOK_DIR/inventories/home/group_vars/ as needed"
 echo ""

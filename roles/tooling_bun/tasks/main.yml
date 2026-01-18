@@ -1,0 +1,24 @@
+---
+- name: Ensure curl is present (Linux)
+  ansible.builtin.package:
+    name: curl
+    state: present
+  become: true
+  when:
+    - bun_enabled
+    - ansible_facts['os_family'] in ['Debian', 'RedHat']
+
+- name: Check if bun is already installed
+  ansible.builtin.command: bun --version
+  register: bun_version
+  changed_when: false
+  failed_when: false
+  when: bun_enabled
+
+- name: Install bun (user-local)
+  ansible.builtin.shell: curl -fsSL https://bun.sh/install | bash
+  args:
+    creates: "{{ ansible_facts['env']['HOME'] }}/.bun/bin/bun"
+  when:
+    - bun_enabled
+    - bun_version.rc != 0

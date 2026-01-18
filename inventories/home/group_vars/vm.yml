@@ -1,0 +1,39 @@
+---
+# VM/minimal profile overrides.
+
+machine_profile: vm
+
+# Keep packages minimal; override linux.yml defaults when the host is in the `vm` group.
+apt_packages:
+  - git
+  - curl
+  - wget
+  - vim
+  - tmux
+  - htop
+  - ripgrep
+  - fzf
+  - jq
+  - bat
+  - build-essential
+  - python3
+  - python3-pip
+  - zsh
+
+dnf_packages:
+  - git
+  - curl
+  - wget
+  - vim-enhanced
+  - tmux
+  - htop
+  - ripgrep
+  - fzf
+  - jq
+  - bat
+  - "@development-tools"
+  - python3
+  - python3-pip
+  - zsh
+
+snap_packages: []

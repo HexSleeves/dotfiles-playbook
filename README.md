@@ -6,9 +6,9 @@ A powerful, idempotent Ansible playbook designed to bootstrap and configure your
 
 This playbook automates the installation and configuration of your entire developer toolchain:
 
-- **macOS Workstation**: Complete setup including Homebrew packages, GUI applications (VS Code, iTerm2, etc.), and macOS system preferences (Dock, Finder).
-- **Linux Desktop**: Personal environment setup with standard CLI tools, development runtimes, and desktop applications.
-- **Cloud/Dev VMs**: A lightweight, minimal configuration focused on core CLI tools (git, tmux, zsh, starship) optimized for remote development.
+- **Bootstraps the system**: OS packages and safe baseline configuration.
+- **Installs core developer tooling**: `mise`, `bun`, and supporting utilities.
+- **Applies dotfiles via chezmoi**: Ansible installs and drives `chezmoi` (dotfile logic should live in your chezmoi repo).
 
 ## 🚀 One-Line Installation
 
@@ -48,42 +48,44 @@ If you prefer to run things yourself:
    - Fedora: `sudo dnf install ansible`
 
 2. **Clone the repo**:
+
    ```bash
    git clone https://github.com/HexSleeves/dotfiles-playbook.git ~/.dotfiles-playbook
    cd ~/.dotfiles-playbook
    ```
 
 3. **Install dependencies**:
+
    ```bash
    ansible-galaxy collection install community.general
    ```
 
 4. **Run the playbook**:
+
    ```bash
-   # Auto-detect tags based on OS
+   # Full setup (bootstrap + tooling + dotfiles if `chezmoi_repo` is configured)
    ansible-playbook site.yml --ask-become-pass
 
-   # OR run specific tags
-   ansible-playbook site.yml --tags macos
-   ansible-playbook site.yml --tags linux,desktop
-   ansible-playbook site.yml --tags exedev,minimal
+   # Selective runs
+   ansible-playbook playbooks/bootstrap.yml --ask-become-pass
+   ansible-playbook playbooks/tooling.yml
+   ansible-playbook playbooks/dotfiles.yml
+
+   # VM/minimal profile
+   ansible-playbook site.yml --ask-become-pass -e machine_profile=vm
    ```
 
 ## 📂 Structure
 
 - `bootstrap.sh`: The universal entry point.
-- `site.yml`: Main playbook file.
-- `inventory.yml`: Defines localhost and other environments.
-- `tasks/`:
-  - `common.yml`: Shared tools (git, zsh, starship).
-  - `macos.yml`: Brew Casks, Mac-specific settings.
-  - `linux.yml`: Apt/Dnf packages for desktop.
-  - `exedev-minimal.yml`: Light setup for VMs.
+- `site.yml`: Back-compat entrypoint (imports `playbooks/site.yml`).
+- `playbooks/`: Composable entrypoints (`bootstrap.yml`, `tooling.yml`, `dotfiles.yml`).
+- `roles/`: Reusable modules (OS, tooling, chezmoi).
+- `inventories/home/`: Default inventory + per-machine overrides.
 
 ## 📝 Configuration
 
-You can customize the setup by modifying variables in `group_vars/`:
+You can customize the setup by modifying variables in `inventories/home/`:
 
-- `all.yml`: Git user/email, common packages.
-- `macos.yml`: List of Homebrew packages and Casks.
-- `exedev.yml`: Minimal package list.
+- `inventories/home/group_vars/all.yml`: shared defaults (set `git_user_name`, `git_user_email`, `chezmoi_repo`).
+- `inventories/home/host_vars/*.yml`: per-machine overrides (recommended).

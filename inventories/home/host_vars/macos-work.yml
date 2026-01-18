@@ -1,0 +1,6 @@
+---
+# Example host-specific overrides for a macOS work machine.
+
+git_user_name: "HexSleeves"
+git_user_email: "lecoqjacob@gmail.com"
+chezmoi_repo: "https://github.com/HexSleeves/dotfiles.git"

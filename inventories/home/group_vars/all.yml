@@ -1,0 +1,25 @@
+---
+# Defaults shared across all machines.
+
+git_user_name: "HexSleeves"
+git_user_email: "lecoqjacob@gmail.com"
+
+# Profile hint for roles to make safe decisions.
+# Supported values: desktop, vm
+machine_profile: desktop
+
+# Core directories to ensure exist.
+common_directories:
+  - .config
+  - .local/bin
+  - projects
+  - workspace
+
+# Chezmoi settings.
+chezmoi_enabled: true
+chezmoi_repo: ""
+chezmoi_apply_force: false
+
+# Tooling toggles.
+mise_enabled: true
+bun_enabled: true
