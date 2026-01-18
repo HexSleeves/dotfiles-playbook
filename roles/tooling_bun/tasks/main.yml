@@ -5,20 +5,29 @@
     state: present
   become: true
   when:
-    - bun_enabled
+    - tooling_bun_enabled
     - ansible_facts['os_family'] in ['Debian', 'RedHat']
 
 - name: Check if bun is already installed
   ansible.builtin.command: bun --version
-  register: bun_version
+  register: tooling_bun_version
   changed_when: false
   failed_when: false
-  when: bun_enabled
+  when: tooling_bun_enabled
+
+- name: Download bun installer
+  ansible.builtin.get_url:
+    url: https://bun.sh/install
+    dest: /tmp/bun-install.sh
+    mode: "0755"
+  when:
+    - tooling_bun_enabled
+    - tooling_bun_version.rc != 0
 
 - name: Install bun (user-local)
-  ansible.builtin.shell: curl -fsSL https://bun.sh/install | bash
+  ansible.builtin.command: /tmp/bun-install.sh
   args:
     creates: "{{ ansible_facts['env']['HOME'] }}/.bun/bin/bun"
   when:
-    - bun_enabled
-    - bun_version.rc != 0
+    - tooling_bun_enabled
+    - tooling_bun_version.rc != 0

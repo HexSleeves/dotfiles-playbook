@@ -1,7 +1,7 @@
 ---
 # Linux desktop-oriented variables
 
-apt_packages:
+os_linux_apt_packages:
   - bat
   - fd-find
   - ripgrep
@@ -27,7 +27,7 @@ apt_packages:
   - net-tools
   - openssh-server
 
-dnf_packages:
+os_linux_dnf_packages:
   - bat
   - fd-find
   - ripgrep
@@ -54,4 +54,4 @@ dnf_packages:
   - openssh-server
 
 # Optional; only installs if snap is present.
-snap_packages: []
+os_linux_snap_packages: []

@@ -1,7 +1,6 @@
 ---
-git_user_name: ""
-git_user_email: ""
-common_directories:
+bootstrap_git_user_name: "HexSleeves"
+bootstrap_git_user_email: "lecoqjacob@gmail.com"
+bootstrap_common_directories:
   - .config
   - .local/bin
-

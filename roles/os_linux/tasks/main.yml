@@ -8,7 +8,7 @@
 
 - name: Install APT packages (Debian/Ubuntu)
   ansible.builtin.apt:
-    name: "{{ (apt_packages_vm if machine_profile == 'vm' else apt_packages) }}"
+    name: "{{ (os_linux_apt_packages_vm if os_linux_machine_profile == 'vm' else os_linux_apt_packages) }}"
     state: present
   become: true
   when: ansible_facts['os_family'] == 'Debian'
@@ -21,14 +21,14 @@
 
 - name: Install DNF packages (Fedora/RHEL)
   ansible.builtin.dnf:
-    name: "{{ (dnf_packages_vm if machine_profile == 'vm' else dnf_packages) }}"
+    name: "{{ (os_linux_dnf_packages_vm if os_linux_machine_profile == 'vm' else os_linux_dnf_packages) }}"
     state: present
   become: true
   when: ansible_facts['os_family'] == 'RedHat'
 
 - name: Check if Snap is available
   ansible.builtin.command: which snap
-  register: snap_check
+  register: os_linux_snap_check
   ignore_errors: true
   changed_when: false
 
@@ -38,7 +38,7 @@
     classic: "{{ item.classic | default(false) }}"
     state: present
   become: true
-  loop: "{{ snap_packages }}"
+  loop: "{{ os_linux_snap_packages }}"
   when:
-    - snap_check.rc == 0
-    - snap_packages | length > 0
+    - os_linux_snap_check.rc == 0
+    - os_linux_snap_packages | length > 0

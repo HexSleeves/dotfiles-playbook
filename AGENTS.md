@@ -39,5 +39,5 @@ There is no dedicated test suite in this repo. Validate changes by:
 ## Commit & Pull Request Guidelines
 
 - Commit messages follow a lightweight Conventional Commits pattern (e.g., `feat:`, `fix:`, `docs:`, `refactor:`) and should be imperative and specific.
-- PRs should include: what changed, target OS/profile (`macos`, `linux`, `machine_profile=vm`), and how it was verified (commands + results).
+- PRs should include: what changed, target OS/profile (`macos`, `linux`, `os_linux_machine_profile=vm`), and how it was verified (commands + results).
 - Avoid committing secrets (tokens, private SSH keys). Keep personal config in `inventories/home/host_vars/` minimal and reviewable.

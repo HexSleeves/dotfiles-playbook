@@ -2,35 +2,42 @@
 - name: Check for Homebrew (Apple Silicon)
   ansible.builtin.stat:
     path: /opt/homebrew/bin/brew
-  register: brew_opt
+  register: os_macos_brew_opt
 
 - name: Check for Homebrew (Intel)
   ansible.builtin.stat:
     path: /usr/local/bin/brew
-  register: brew_usr
+  register: os_macos_brew_usr
 
 - name: Install Homebrew
   ansible.builtin.shell: /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
   args:
     creates: /opt/homebrew/bin/brew
-  when: not brew_opt.stat.exists and not brew_usr.stat.exists
+  when: not os_macos_brew_opt.stat.exists and not os_macos_brew_usr.stat.exists
 
 - name: Add Homebrew to PATH for Apple Silicon
   ansible.builtin.lineinfile:
     path: "{{ ansible_facts['env']['HOME'] }}/.zprofile"
     line: 'eval "$(/opt/homebrew/bin/brew shellenv)"'
     create: true
+    mode: "0644"
   when: ansible_facts['machine'] == 'arm64'
 
 - name: Install Homebrew packages
   community.general.homebrew:
-    name: "{{ homebrew_packages }}"
+    name: "{{ os_macos_homebrew_packages }}"
     state: present
+
+- name: Prompt to install Homebrew casks
+  ansible.builtin.pause:
+    prompt: "Do you want to install Homebrew casks? (y/N)"
+  register: os_macos_cask_prompt
 
 - name: Install Homebrew casks
   community.general.homebrew_cask:
-    name: "{{ homebrew_casks }}"
+    name: "{{ os_macos_homebrew_casks }}"
     state: present
+  when: os_macos_cask_prompt.user_input | lower in ['y', 'yes']
 
 - name: Set macOS defaults
   community.general.osx_defaults:
@@ -39,4 +46,4 @@
     type: "{{ item.type }}"
     value: "{{ item.value }}"
     state: present
-  loop: "{{ macos_defaults }}"
+  loop: "{{ os_macos_defaults }}"

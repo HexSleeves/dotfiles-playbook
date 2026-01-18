@@ -1,7 +1,7 @@
 ---
-machine_profile: desktop
+os_linux_machine_profile: desktop
 
-apt_packages:
+os_linux_apt_packages:
   - bat
   - fd-find
   - ripgrep
@@ -27,7 +27,7 @@ apt_packages:
   - net-tools
   - openssh-server
 
-dnf_packages:
+os_linux_dnf_packages:
   - bat
   - fd-find
   - ripgrep
@@ -53,7 +53,7 @@ dnf_packages:
   - net-tools
   - openssh-server
 
-apt_packages_vm:
+os_linux_apt_packages_vm:
   - git
   - curl
   - wget
@@ -69,7 +69,7 @@ apt_packages_vm:
   - python3-pip
   - zsh
 
-dnf_packages_vm:
+os_linux_dnf_packages_vm:
   - git
   - curl
   - wget
@@ -85,4 +85,4 @@ dnf_packages_vm:
   - python3-pip
   - zsh
 
-snap_packages: []
+os_linux_snap_packages: []

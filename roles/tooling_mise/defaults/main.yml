@@ -1,7 +1,6 @@
 ---
-mise_enabled: true
+tooling_mise_enabled: true
 
 # If true, Ansible will add minimal shell activation to rc files.
 # Prefer managing this via chezmoi for long-term ownership.
-mise_manage_shell: false
-
+tooling_mise_manage_shell: false

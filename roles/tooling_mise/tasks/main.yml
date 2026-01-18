@@ -5,56 +5,68 @@
     state: present
   become: true
   when:
-    - mise_enabled
+    - tooling_mise_enabled
     - ansible_facts['os_family'] in ['Debian', 'RedHat']
 
 - name: Check if mise is already installed
   ansible.builtin.command: mise --version
-  register: mise_version
+  register: tooling_mise_version
   changed_when: false
   failed_when: false
-  when: mise_enabled
+  when: tooling_mise_enabled
 
 - name: Install mise (macOS via Homebrew)
   community.general.homebrew:
     name: mise
     state: present
   when:
-    - mise_enabled
+    - tooling_mise_enabled
     - ansible_facts['os_family'] == 'Darwin'
-    - mise_version.rc != 0
+    - tooling_mise_version.rc != 0
 
-- name: Install mise (Linux via installer)
-  ansible.builtin.shell: curl -fsSL https://mise.run | sh
+- name: Download mise installer (Linux)
+  ansible.builtin.get_url:
+    url: https://mise.run
+    dest: /tmp/mise-install.sh
+    mode: "0755"
+  when:
+    - tooling_mise_enabled
+    - ansible_facts['os_family'] in ['Debian', 'RedHat']
+    - tooling_mise_version.rc != 0
+
+- name: Install mise (Linux)
+  ansible.builtin.command: /tmp/mise-install.sh
   args:
     creates: "{{ ansible_facts['env']['HOME'] }}/.local/bin/mise"
   when:
-    - mise_enabled
+    - tooling_mise_enabled
     - ansible_facts['os_family'] in ['Debian', 'RedHat']
-    - mise_version.rc != 0
+    - tooling_mise_version.rc != 0
 
 - name: Ensure mise is on PATH for bash (optional)
   ansible.builtin.blockinfile:
     path: "{{ ansible_facts['env']['HOME'] }}/.bashrc"
     create: true
     marker: "# {mark} ANSIBLE MANAGED - mise"
+    mode: "0644"
     block: |
       if [ -x "$HOME/.local/bin/mise" ]; then
         eval "$("$HOME/.local/bin/mise" activate bash)"
       fi
   when:
-    - mise_enabled
-    - mise_manage_shell
+    - tooling_mise_enabled
+    - tooling_mise_manage_shell
 
 - name: Ensure mise is on PATH for zsh (optional)
   ansible.builtin.blockinfile:
     path: "{{ ansible_facts['env']['HOME'] }}/.zshrc"
     create: true
     marker: "# {mark} ANSIBLE MANAGED - mise"
+    mode: "0644"
     block: |
       if [ -x "$HOME/.local/bin/mise" ]; then
         eval "$("$HOME/.local/bin/mise" activate zsh)"
       fi
   when:
-    - mise_enabled
-    - mise_manage_shell
+    - tooling_mise_enabled
+    - tooling_mise_manage_shell

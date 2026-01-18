@@ -1,7 +1,7 @@
 ---
 # macOS-specific variables
 
-homebrew_packages:
+os_macos_homebrew_packages:
   - bat
   - eza
   - fd
@@ -28,7 +28,7 @@ homebrew_packages:
   - starship
   - direnv
 
-homebrew_casks:
+os_macos_homebrew_casks:
   - visual-studio-code
   - iterm2
   - docker
@@ -38,7 +38,7 @@ homebrew_casks:
   - rectangle
   - stats
 
-macos_defaults:
+os_macos_defaults:
   - domain: com.apple.dock
     key: autohide
     type: bool

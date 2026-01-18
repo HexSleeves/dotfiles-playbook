@@ -145,7 +145,7 @@ run_playbook() {
     cd "$PLAYBOOK_DIR"
     if [[ "$MINIMAL_SETUP" == true ]]; then
         print_step "Running VM/minimal profile..."
-        ansible-playbook site.yml --ask-become-pass -e "machine_profile=vm"
+        ansible-playbook site.yml --ask-become-pass -e "os_linux_machine_profile=vm"
     else
         ansible-playbook site.yml --ask-become-pass
     fi

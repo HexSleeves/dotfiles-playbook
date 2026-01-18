@@ -1,4 +1,25 @@
 ---
-- import_playbook: bootstrap.yml
-- import_playbook: tooling.yml
-- import_playbook: dotfiles.yml
+- name: Full setup (bootstrap + tooling + dotfiles)
+  hosts: all
+  gather_facts: true
+
+  roles:
+    - role: bootstrap
+      tags: [bootstrap]
+
+    - role: os_macos
+      when: ansible_facts['os_family'] == 'Darwin'
+      tags: [bootstrap, os, macos]
+
+    - role: os_linux
+      when: ansible_facts['os_family'] in ['Debian', 'RedHat']
+      tags: [bootstrap, os, linux]
+
+    - role: tooling_mise
+      tags: [tooling, mise]
+
+    - role: tooling_bun
+      tags: [tooling, bun]
+
+    - role: chezmoi
+      tags: [dotfiles, chezmoi]

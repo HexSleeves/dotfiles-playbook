@@ -10,21 +10,21 @@
     path: "{{ ansible_facts['env']['HOME'] }}/{{ item }}"
     state: directory
     mode: "0755"
-  loop: "{{ common_directories }}"
+  loop: "{{ bootstrap_common_directories }}"
 
 - name: Configure Git user name (if set)
   community.general.git_config:
     name: user.name
     scope: global
-    value: "{{ git_user_name }}"
-  when: git_user_name | length > 0
+    value: "{{ bootstrap_git_user_name }}"
+  when: bootstrap_git_user_name | length > 0
 
 - name: Configure Git user email (if set)
   community.general.git_config:
     name: user.email
     scope: global
-    value: "{{ git_user_email }}"
-  when: git_user_email | length > 0
+    value: "{{ bootstrap_git_user_email }}"
+  when: bootstrap_git_user_email | length > 0
 
 - name: Configure Git default branch
   community.general.git_config:

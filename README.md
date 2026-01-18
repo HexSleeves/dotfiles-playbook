@@ -72,7 +72,7 @@ If you prefer to run things yourself:
    ansible-playbook playbooks/dotfiles.yml
 
    # VM/minimal profile
-   ansible-playbook site.yml --ask-become-pass -e machine_profile=vm
+   ansible-playbook site.yml --ask-become-pass -e os_linux_machine_profile=vm
    ```
 
 ## 📂 Structure

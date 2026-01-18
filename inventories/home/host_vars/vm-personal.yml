@@ -1,8 +1,8 @@
 ---
 # Example host-specific overrides for a personal Linux VM.
 
-machine_profile: vm
+os_linux_machine_profile: vm
 
-git_user_name: "HexSleeves"
-git_user_email: "lecoqjacob@gmail.com"
+bootstrap_git_user_name: "HexSleeves"
+bootstrap_git_user_email: "lecoqjacob@gmail.com"
 chezmoi_repo: "https://github.com/HexSleeves/dotfiles.git"

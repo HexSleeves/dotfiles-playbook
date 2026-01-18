@@ -1,15 +1,15 @@
 ---
 # Defaults shared across all machines.
 
-git_user_name: "HexSleeves"
-git_user_email: "lecoqjacob@gmail.com"
+bootstrap_git_user_name: "HexSleeves"
+bootstrap_git_user_email: "lecoqjacob@gmail.com"
 
 # Profile hint for roles to make safe decisions.
 # Supported values: desktop, vm
-machine_profile: desktop
+os_linux_machine_profile: desktop
 
 # Core directories to ensure exist.
-common_directories:
+bootstrap_common_directories:
   - .config
   - .local/bin
   - projects
@@ -21,5 +21,5 @@ chezmoi_repo: ""
 chezmoi_apply_force: false
 
 # Tooling toggles.
-mise_enabled: true
-bun_enabled: true
+tooling_mise_enabled: true
+tooling_bun_enabled: true
